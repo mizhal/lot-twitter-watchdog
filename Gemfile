@@ -4,4 +4,4 @@ source 'https://rubygems.org'
 gemspec
 
 gem "lot-documentcatalog", git: "https://github.com/mizhal/lot-document-catalog",
-	branch: "release"
+	branch: "develop"
