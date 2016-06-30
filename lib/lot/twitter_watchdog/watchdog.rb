@@ -16,7 +16,7 @@ module Lot
       end
 
       def sleep_for_api_limit
-        sleep 3
+        sleep Lot::TwitterWatchdog::SLEEP_TIME
       end
 
     end

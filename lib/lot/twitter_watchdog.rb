@@ -11,6 +11,8 @@ require "lot/twitter_watchdog/watchdog"
 module Lot
   module TwitterWatchdog
 
+    SLEEP_TIME = 3
+
     ## FACADE
     def self.get_watchdog
       if(!has_conf)
