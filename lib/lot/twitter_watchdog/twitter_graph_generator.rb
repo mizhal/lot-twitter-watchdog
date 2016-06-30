@@ -36,6 +36,8 @@ module Lot
               )
             end
             
+            touch(link)
+
             yield
 
             count += 1
@@ -59,6 +61,8 @@ module Lot
               )
             end
 
+            touch(link)
+
             yield
 
             count += 1
@@ -66,6 +70,13 @@ module Lot
 
         end
 
+      end
+
+      def touch link
+        link.first_seen = DateTime.now if link.first_seen.nil?
+        link.last_seen = DateTime.now
+        
+        link.save
       end
 
       def stop

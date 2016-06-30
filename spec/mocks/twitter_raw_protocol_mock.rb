@@ -9,7 +9,11 @@ class TwitterRawProtocolMock
   end
 end
 
-class ObjectMock
+module ObjectMock
+  def save
+    ## doesnt do anything, all objects are in memory, don't need to 
+    ## save state
+  end
 end
 
 module CollectionMock
@@ -17,7 +21,10 @@ module CollectionMock
     def create data
       ensure_backend_mock
 
-      @backend << @model_class.new(data)
+      new_ = @model_class.new(data)
+      @backend << new_
+
+      new_
     end
 
     def all 
@@ -53,11 +60,12 @@ end
 
 class TwitterLinkMock
 
+  include ObjectMock
   extend CollectionMock
 
   set_model_class TwitterLinkMock
 
-  attr_accessor :screen_name1, :screen_name2, :kind
+  attr_accessor :screen_name1, :screen_name2, :kind, :first_seen, :last_seen
 
   def initialize data
     data.each{|k, v| send("#{k}=", v)}
@@ -67,6 +75,7 @@ end
 
 class TwitterTargetMock
 
+  include ObjectMock
   extend CollectionMock
 
   set_model_class TwitterTargetMock
