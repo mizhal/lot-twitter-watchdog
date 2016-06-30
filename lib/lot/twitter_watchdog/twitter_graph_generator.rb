@@ -18,17 +18,33 @@ module Lot
           break if @stop
 
           @client.following(nick).each do |result|
-            link = catalog.TwitterLink.find_by_first_and_second(nick, result.username)
+            link = catalog.TwitterLink.find_by(
+              screen_name1: nick, 
+              screen_name2: result.username,
+              kind: "follow"
+            )
             unless link.nil?
-              link = catalog.TwitterLink.create(first: nick, second: result.username)
+              link = catalog.TwitterLink.create(
+                screen_name1: nick, 
+                screen_name2: result.username,
+                kind: "follow"
+              )
             end
             yield
           end
 
           @client.followers(nick).each do |result|
-            link = catalog.TwitterLink.find_by_first_and_second(result.username, nick)
+            link = catalog.TwitterLink.find_by(
+              screen_name1: result.username, 
+              screen_name2: nick,
+              kind: "follow"
+            )
             unless link.nil?
-              link = catalog.TwitterLink.create(second: nick, first: result.username)
+              link = catalog.TwitterLink.create(
+                screen_name1: result.username, 
+                screen_name2: nick,
+                kind: "follow"
+              )
             end
             yield
           end

@@ -1,4 +1,5 @@
 require "twitter"
+require "yaml"
 
 module Lot
   module TwitterWatchdog
@@ -19,6 +20,16 @@ module Lot
       def open_config conf_file
         @config = YAML.load(open(conf_file){|f| f.read})
       end
+
+      def smoke_test
+        begin
+          @client.user("gem")
+          return true
+        rescue
+          return false
+        end
+      end
+
     end
   end
 end
