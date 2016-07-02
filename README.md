@@ -1,41 +1,28 @@
-# Lot::TwitterWatchdog
+# Twitter Watchdog Component for Lord of the Tweets
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lot/twitter_watchdog`. To experiment with that code, run `bin/console` for an interactive prompt.
+This component (packaged as a ruby gem) implements the scanning and saving of tweet links, profile data, favs & retweets information gathered from twitter API.
 
-TODO: Delete this and the text above, and describe your gem
+As long as it remains convenient, every read interaction with Twitter API must be done only in this component. Write interactions could be added in the future, but as of now, they are not included in the scope of the project, and then it will be better to treat them as another component.
 
-## Installation
+## Dependencies
 
-Add this line to your application's Gemfile:
+* twitter gem
+* TwitterRawProtocol ''catalog'', i.e, a logical interface wich provides access to data layer (whatever that layer would be).
 
-```ruby
-gem 'lot-twitter_watchdog'
-```
+## Architecture
 
-And then execute:
+Each major task assigned to the component (update twitter follower graph, update profile data, gather tweets, etc) is carried out by a single class that fulfills the so-called "IWatchdogTask" interface.
 
-    $ bundle
+This interface is simple, a Task must have a method to start execution and a method to stop execution.
 
-Or install it yourself as:
+Execution: **execute**, this method must be a coroutine, i.e, it must yield the control eventually to allow the controller class to interleave tasks or to sleep the time required to not starve the API (twitter has a limit of request per time unit).
 
-    $ gem install lot-twitter_watchdog
+Stop: **stop** this method must stop the task. This method is not intended to be called from another process or thread, but from the yield block of execute coroutine. Therefore it should not deal with concurrency issues at all.
 
-## Usage
+The controller class is called *Watchdog*. When a new instance of the class is created, it must be provided with a list of Tasks. 
+When the method **run** is called on the Watchdog, each task of the lists will be sent "execute" and when this method yields control, Watchdog will sleep the amount of time required.
 
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/lot-twitter_watchdog.
+Each one of the tasks is expected to be correctly configured and initialized when passed to Watchdog. This stage of configuration and initialization is completely free for the developer to design and it is not constrained by any interface or rule.
 
 
-## License
-
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
