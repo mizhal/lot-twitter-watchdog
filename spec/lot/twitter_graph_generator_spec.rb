@@ -35,5 +35,7 @@ describe Lot::TwitterWatchdog::TwitterGraphGenerator do
     ## LINK_LIMIT gets counted twice, for followers and following
     expect(catalog.TwitterLink.count).to be(LINK_LIMIT * 2)#, "followers and following count doesnt match"
 
+    catalog.TwitterTarget.destroy_all
+    catalog.TwitterLink.destroy_all    
   end
 end
