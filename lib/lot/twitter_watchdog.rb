@@ -6,6 +6,7 @@ require "lot/twitter_watchdog/i_watchdog_task"
 require "lot/twitter_watchdog/twitter_control"
 require "lot/twitter_watchdog/twitter_graph_generator"
 require "lot/twitter_watchdog/twitter_touch_graph"
+require "lot/twitter_watchdog/twitter_profile_harvester"
 require "lot/twitter_watchdog/watchdog"
 
 module Lot

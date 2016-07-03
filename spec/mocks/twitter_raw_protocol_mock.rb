@@ -3,7 +3,8 @@ class TwitterRawProtocolMock
     def catalog
       @catalog = @catalog || OpenStruct.new(
         "TwitterLink" => TwitterLinkMock,
-        "TwitterTarget" => TwitterTargetMock
+        "TwitterTarget" => TwitterTargetMock,
+        "TwitterRawProfile" => TwitterRawProfileMock
       )
     end
   end
@@ -28,14 +29,17 @@ module CollectionMock
     end
 
     def all 
+      ensure_backend_mock
       @backend
     end
 
     def count
+      ensure_backend_mock
       @backend.count
     end
 
     def find_by filter
+      ensure_backend_mock
       ## this is not efficient, only meant for testing
       @backend.select{ |obj| 
         filter.all?{ |k,v| obj.send(k) == v }
@@ -80,10 +84,36 @@ class TwitterTargetMock
 
   set_model_class TwitterTargetMock
 
-  attr_accessor :screen_name
+  attr_accessor :screen_name, :id
 
   def initialize data
     data.each{|k, v| send("#{k}=", v)}
   end
+
+end
+
+class TwitterRawProfileMock
+  include ObjectMock
+  extend CollectionMock
+
+  set_model_class TwitterRawProfileMock
+
+  attr_accessor :screen_name, :id,
+    :protected, :verified, :muting, :suspended,
+    :geo_enabled, :time_zone, :lang,
+    :description, :uri, :website_uris, :status,
+    :created_at,
+
+    :first_seen, :last_seen,
+
+    :not_found,
+
+    ### 1-N
+    :screen_names_history,
+    :suspension_history,
+    :protected_history,
+    :geo_enabled_history,
+    :description_history,
+    :time_zone_history
 
 end
