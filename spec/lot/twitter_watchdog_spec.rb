@@ -46,9 +46,11 @@ module Lot
           ]
         end
 
+        expect(catalog.TwitterLink.count).to be(LINK_LIMIT * 2), "followers and following count doesnt match"
+
         catalog.TwitterTarget.destroy_all
         catalog.TwitterLink.destroy_all
-        
+
       end
 
     end
