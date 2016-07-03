@@ -8,6 +8,9 @@ module Lot
 
   		def stop
   		end
+
+      def client
+      end
   	end
   end
 end

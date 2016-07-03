@@ -3,6 +3,8 @@ module Lot
 
     class TwitterGraphGenerator < IWatchdogTask
 
+      attr_accessor :client
+
       def initialize(client, catalog, limit_links = nil)
         @client = client
         @catalog = catalog

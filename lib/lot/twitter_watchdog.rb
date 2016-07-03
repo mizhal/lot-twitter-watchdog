@@ -13,24 +13,25 @@ module Lot
 
     SLEEP_TIME = 3
 
-    ## FACADE
-    def self.get_watchdog
-      if(!has_conf)
-        raise "TwitterWatchdog not configured, cannot start"
-      end
-      
-      return Watchdog.new(get_client)
-    end
-    ## END: FACADE
-
     ## CONFIG
     def self.configure
       yield get_conf
       initialize_twitter_api
+      start_watchdog
     end
     
     class << self
-      attr_accessor :config, :api_client
+      attr_accessor :config, :api_client, :watchdog
+
+      ## FACADE
+      def get_watchdog
+        if(!has_conf)
+          raise "TwitterWatchdog not configured, can't create watchdog instance"
+        end
+        
+        return @watchdog
+      end
+      ## END: FACADE
 
       private 
 
@@ -44,17 +45,29 @@ module Lot
       end
 
       def initialize_twitter_api
-        @api_client = TwitterControl.new @config.api_secrets_file, @config.environment
+        @api_control = TwitterControl.new @config.api_secrets_file, @config.environment
+        unless @api_control.smoke_test
+          raise "Twitter api client not connected due to misconfiguration"
+        end
       end
 
       def get_client
-        @api_client
+        @api_control.client
+      end
+
+      def start_watchdog
+        ## set common twitter api client
+        @config.tasks.each do |task|
+          task.client = get_client
+        end
+        @watchdog = Watchdog.new @config.tasks
+        @watchdog.run
       end
     end
 
     class Config
-      attr_accessor :api_secrets_file
-      attr_accessor :environment
+      attr_accessor :api_secrets_file, :environment, 
+        :tasks ## list, contains IWatchdogTask instances
     end
     ## END: CONFIG
 

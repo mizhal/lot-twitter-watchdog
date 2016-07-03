@@ -32,6 +32,25 @@ module Lot
         catalog.TwitterTarget.destroy_all
         catalog.TwitterLink.destroy_all  
       end
+
+      it 'can run with gem initializer' do
+
+        catalog = TwitterRawProtocolMock.catalog
+        catalog.TwitterTarget.create(screen_name: "gem")
+
+        Lot::TwitterWatchdog.configure do |config|
+          config.api_secrets_file = "spec/lot/twitter-api.yml"
+          config.environment = "test"
+          config.tasks = [
+            Lot::TwitterWatchdog::TwitterGraphGenerator.new(nil, catalog, LINK_LIMIT)
+          ]
+        end
+
+        catalog.TwitterTarget.destroy_all
+        catalog.TwitterLink.destroy_all
+        
+      end
+
     end
   end 
 end
