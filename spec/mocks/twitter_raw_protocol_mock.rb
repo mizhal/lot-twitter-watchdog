@@ -28,14 +28,17 @@ module CollectionMock
     end
 
     def all 
+      ensure_backend_mock
       @backend
     end
 
     def count
+      ensure_backend_mock
       @backend.count
     end
 
     def find_by filter
+      ensure_backend_mock
       ## this is not efficient, only meant for testing
       @backend.select{ |obj| 
         filter.all?{ |k,v| obj.send(k) == v }

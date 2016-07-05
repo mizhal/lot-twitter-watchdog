@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'logger'
+require 'mocks/twitter_raw_protocol_mock'
 
 LINK_LIMIT = 5
 
@@ -41,10 +43,42 @@ module Lot
         Lot::TwitterWatchdog.configure do |config|
           config.api_secrets_file = "spec/lot/twitter-api.yml"
           config.environment = "test"
+          config.logger = nil
           config.tasks = [
             Lot::TwitterWatchdog::TwitterGraphGenerator.new(nil, catalog, LINK_LIMIT)
           ]
         end
+
+        expect(catalog.TwitterLink.count).to be(LINK_LIMIT * 2), "followers and following count doesnt match"
+
+        catalog.TwitterTarget.destroy_all
+        catalog.TwitterLink.destroy_all
+
+      end
+
+      it 'can run with gem initializer and logger' do
+
+        LOG_FILE = "spec-test-initializer.log"
+
+        FileUtils.rm_f LOG_FILE
+
+        catalog = TwitterRawProtocolMock.catalog
+        catalog.TwitterTarget.create(screen_name: "gem")
+
+        Lot::TwitterWatchdog.configure do |config|
+          config.api_secrets_file = "spec/lot/twitter-api.yml"
+          config.environment = "test"
+          config.logger = Logger.new(LOG_FILE)
+          config.tasks = [
+            Lot::TwitterWatchdog::TwitterGraphGenerator.new(nil, catalog, LINK_LIMIT)
+          ]
+        end
+
+        logstr = nil
+        expect{ logstr = File.new(LOG_FILE).read }.to_not raise_error
+        expect(logstr.lines.count).to be >= 1
+
+
 
         expect(catalog.TwitterLink.count).to be(LINK_LIMIT * 2), "followers and following count doesnt match"
 

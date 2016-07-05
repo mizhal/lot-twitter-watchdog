@@ -3,7 +3,7 @@ module Lot
 
     class TwitterTouchGraphGenerator < IWatchdogTask
 
-      attr_accessor :client
+      attr_accessor :client, :logger
 
       def initialize client
         @client = client

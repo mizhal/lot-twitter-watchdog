@@ -55,18 +55,28 @@ module Lot
         @api_control.client
       end
 
+      def get_logger
+        @config.logger
+      end
+
       def start_watchdog
         ## set common twitter api client
         @config.tasks.each do |task|
           task.client = get_client
         end
+        ## set logger
+        @config.tasks.each do |task|
+          task.logger = get_logger
+        end
         @watchdog = Watchdog.new @config.tasks
+        @watchdog.logger = get_logger
         @watchdog.run
       end
     end
 
     class Config
-      attr_accessor :api_secrets_file, :environment, 
+      attr_accessor :api_secrets_file, :environment,
+        :logger, 
         :tasks ## list, contains IWatchdogTask instances
     end
     ## END: CONFIG
