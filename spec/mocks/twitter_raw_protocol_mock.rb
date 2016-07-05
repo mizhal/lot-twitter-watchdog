@@ -86,11 +86,10 @@ class TwitterTargetMock
 
   attr_accessor :screen_name
 
-<<<<<<< Updated upstream
   def initialize data
     data.each{|k, v| send("#{k}=", v)}
   end
-=======
+
 end
 
 class TwitterRawProfileMock
@@ -116,6 +115,5 @@ class TwitterRawProfileMock
     :geo_enabled_history,
     :description_history,
     :time_zone_history
->>>>>>> Stashed changes
 
 end
