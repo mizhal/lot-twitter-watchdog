@@ -114,29 +114,3 @@ class TwitterRawProfileMock
     :time_zone_history
 
 end
-
-class TwitterRawProfileMock
-  include ObjectMock
-  extend CollectionMock
-
-  set_model_class TwitterRawProfileMock
-
-  attr_accessor :screen_name, :id,
-    :protected, :verified, :muting, :suspended,
-    :geo_enabled, :time_zone, :lang,
-    :description, :uri, :website_uris, :status,
-    :created_at,
-
-    :first_seen, :last_seen,
-
-    :not_found,
-
-    ### 1-N
-    :screen_names_history,
-    :suspension_history,
-    :protected_history,
-    :geo_enabled_history,
-    :description_history,
-    :time_zone_history
-
-end
