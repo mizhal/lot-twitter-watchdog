@@ -8,3 +8,4 @@
 /spec/reports/
 /spec/lot/twitter-api.yml
 /tmp/
+*.log
