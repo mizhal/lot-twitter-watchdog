@@ -1,14 +1,15 @@
 module Lot
   module TwitterWatchdog
     class TwitterProfileHarvester < IWatchdogTask
-
-      attr_accessor :client
+      
+      attr_accessor :client, :logger, :not_found_count
 
       def initialize catalog, twitter_client, limit_iterations = nil
         @client = twitter_client
         @catalog = catalog
         @stop = false
         @limit = limit_iterations
+        @not_found_count = 0
       end
 
       def execute
@@ -17,21 +18,23 @@ module Lot
 
           break if @stop
 
-          break if count >= @limit
+          break if @limit && count >= @limit
 
           profile_data = @catalog.TwitterRawProfile
             .find_by(screen_name: target.screen_name)
             .first
 
           if profile_data.nil?
-            profile_data = @catalog.TwitterRawProfile.new
+            profile_data = @catalog.TwitterRawProfile.create :screen_name => target.screen_name
           end
-
+          
           begin
             twitter_user = @client.user target.screen_name
           rescue Twitter::Error::NotFound => e
             profile_data.not_found = true
-
+            @not_found_count += 1
+            
+            with_log{|log| log.error("user #{target.screen_name} (id=#{target.id}) not found!")}
             next
           end
 

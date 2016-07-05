@@ -76,9 +76,7 @@ module Lot
 
         logstr = nil
         expect{ logstr = File.new(LOG_FILE).read }.to_not raise_error
-        expect(logstr.lines.count).to be >= 1
-
-
+        expect(logstr.lines.count).to be >= 2 # header + message
 
         expect(catalog.TwitterLink.count).to be(LINK_LIMIT * 2), "followers and following count doesnt match"
 
