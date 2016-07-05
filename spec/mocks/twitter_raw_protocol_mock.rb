@@ -11,6 +11,11 @@ class TwitterRawProtocolMock
 end
 
 module ObjectMock
+
+  def initialize data
+    data.each{|k, v| send("#{k}=", v)}
+  end
+
   def save
     ## doesnt do anything, all objects are in memory, don't need to 
     ## save state
@@ -71,10 +76,6 @@ class TwitterLinkMock
 
   attr_accessor :screen_name1, :screen_name2, :kind, :first_seen, :last_seen
 
-  def initialize data
-    data.each{|k, v| send("#{k}=", v)}
-  end
-
 end
 
 class TwitterTargetMock
@@ -86,9 +87,37 @@ class TwitterTargetMock
 
   attr_accessor :screen_name, :id
 
+<<<<<<< Updated upstream
   def initialize data
     data.each{|k, v| send("#{k}=", v)}
   end
+=======
+end
+
+class TwitterRawProfileMock
+  include ObjectMock
+  extend CollectionMock
+
+  set_model_class TwitterRawProfileMock
+
+  attr_accessor :screen_name, :id,
+    :protected, :verified, :muting, :suspended,
+    :geo_enabled, :time_zone, :lang,
+    :description, :uri, :website_uris, :status,
+    :created_at,
+
+    :first_seen, :last_seen,
+
+    :not_found,
+
+    ### 1-N
+    :screen_names_history,
+    :suspension_history,
+    :protected_history,
+    :geo_enabled_history,
+    :description_history,
+    :time_zone_history
+>>>>>>> Stashed changes
 
 end
 
