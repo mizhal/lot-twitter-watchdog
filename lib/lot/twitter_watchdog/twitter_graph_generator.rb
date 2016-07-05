@@ -3,6 +3,8 @@ module Lot
 
     class TwitterGraphGenerator < IWatchdogTask
 
+      attr_accessor :client, :logger
+
       def initialize(client, catalog, limit_links = nil)
         @client = client
         @catalog = catalog
@@ -12,6 +14,10 @@ module Lot
 
       def execute()
         
+        with_log do |log|
+          log.info("start graph generator")
+        end
+
         pack_of_nicks = @catalog.TwitterTarget.all.map{|x| x.screen_name}
 
         pack_of_nicks.each do |nick|
