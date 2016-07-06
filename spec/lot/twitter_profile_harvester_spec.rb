@@ -22,6 +22,8 @@ describe Lot::TwitterWatchdog::TwitterProfileHarvester do
       sleep Lot::TwitterWatchdog::SLEEP_TIME
     end
 
+    expect(catalog.TwitterRawProfile.count).to be(names.count), "the watcher has not created all inspected profiles in the database"
+
     catalog.TwitterTarget.destroy_all
     catalog.TwitterRawProfile.destroy_all
     
