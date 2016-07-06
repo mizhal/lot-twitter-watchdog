@@ -4,7 +4,8 @@ class TwitterRawProtocolMock
       @catalog = @catalog || OpenStruct.new(
         "TwitterLink" => TwitterLinkMock,
         "TwitterTarget" => TwitterTargetMock,
-        "TwitterRawProfile" => TwitterRawProfileMock
+        "TwitterRawProfile" => TwitterRawProfileMock,
+        "TwitterTouch" => TwitterTouchMock
       )
     end
   end
@@ -49,6 +50,10 @@ module CollectionMock
       @backend.select{ |obj| 
         filter.all?{ |k,v| obj.send(k) == v }
       }
+    end
+
+    def exists? filter
+      self.find_by(filter).any?
     end
 
     def set_model_class model_class
@@ -113,4 +118,17 @@ class TwitterRawProfileMock
     :description_history,
     :time_zone_history
 
+end
+
+class TwitterTouchMock
+  include ObjectMock
+  extend CollectionMock
+
+  set_model_class TwitterTouchMock
+
+  KIND = [:fav, :rt, :mention, :reply]
+
+  attr_accessor :tweet_id, :origin, :destination,
+    :kind,
+    :first_seen, :last_seen
 end
