@@ -4,7 +4,7 @@ require "yaml"
 module Lot
   module TwitterWatchdog
     class TwitterControl
-      attr_reader :client
+      attr_reader :client, :streaming
 
       def initialize config_file, environment
         open_config config_file
