@@ -21,6 +21,7 @@ module Lot
 
           scan_timeline(target) do
             count += 1
+            yield
           end
 
           yield
@@ -29,6 +30,7 @@ module Lot
 
           scan_favorites(target) do
             count += 1
+            yield
           end
 
           yield
@@ -54,17 +56,23 @@ module Lot
             else
               create(tweet, user, :rt)
             end
+            yield
+
           elsif tweet.reply?
             if is_known?(tweet, user, :reply)
               touch(tweet, user, :reply)
             else
               create_reply(tweet, user)
             end
+
+            yield
           end
 
-          scan_mentions(tweet, user)
+          scan_mentions(tweet, user) do 
+            
+            yield
 
-          yield
+          end
         end
       end
 
@@ -90,6 +98,8 @@ module Lot
           else
             create_mention(tweet, user, mention)
           end
+
+          yield
         end
       end
 
@@ -121,7 +131,7 @@ module Lot
           tweet_id: tweet.id,
           origin: user.id,
           destination: tweet.in_reply_to_user_id, 
-          kind: kind,
+          kind: :reply,
           first_seen: DateTime.now,
           last_seen: DateTime.now
         )
