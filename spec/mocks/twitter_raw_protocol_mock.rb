@@ -1,3 +1,5 @@
+require "csv"
+
 class TwitterRawProtocolMock
   class << self
     def catalog
@@ -13,7 +15,7 @@ end
 
 module ObjectMock
 
-  def initialize data
+  def initialize(data = {})
     data.each{|k, v| send("#{k}=", v)}
   end
 
@@ -21,6 +23,11 @@ module ObjectMock
     ## doesnt do anything, all objects are in memory, don't need to 
     ## save state
   end
+
+  def get_seteable_fields
+    methods.select{|x| x.to_s =~ /^[a-zA-Z_0-9]*[=]$/}.map{|x| x.to_s.slice(0..-2)}
+  end
+
 end
 
 module CollectionMock
@@ -64,11 +71,27 @@ module CollectionMock
       @backend = []
     end
 
+    def list_seteable_fields 
+      instance_methods.select{|x| x.to_s =~ /^[a-zA-Z_0-9]*[=]$/}.map{|x| x.to_s.slice(0..-2)}
+    end
+
+    def export_to_csv filename
+      fields = list_seteable_fields
+      CSV.open(filename, "w", :col_sep => ";", :force_quotes => true) do |csv|
+        csv << fields
+        all.each do |instance|
+          csv << fields.map{|field| instance.send(field)}
+        end
+      end
+    end
+
     private
 
     def ensure_backend_mock
       @backend = @backend || []
     end
+
+
 
 end
 

@@ -30,6 +30,9 @@ describe Lot::TwitterWatchdog::TwitterTouchGraphGenerator do
     expect{ logstr = File.new(LOG_FILE).read }.to_not raise_error
     expect(logstr.lines.count).to be >= 1
 
+    catalog.TwitterTarget.export_to_csv "targets-inspected.csv"
+    catalog.TwitterTouch.export_to_csv "twitter-touchs.csv"
+
     catalog.TwitterTarget.destroy_all
     catalog.TwitterTouch.destroy_all
   end 
